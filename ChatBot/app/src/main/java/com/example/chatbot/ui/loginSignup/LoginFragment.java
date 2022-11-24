@@ -29,7 +29,7 @@ import io.socket.emitter.Emitter;
 
 public class LoginFragment extends Fragment {
 
-    private final String URL_SERVER = "http://192.168.1.18:3000/";
+    private final String URL_SERVER = "http://192.168.1.40:3000/";
     private Socket mSocket;
 
     {
@@ -43,29 +43,6 @@ public class LoginFragment extends Fragment {
         }
     }
 
-    private Emitter.Listener onNewMessage = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    String username;
-                    String message;
-                    try {
-                        username = data.getString("username");
-                        message = data.getString("message");
-                    } catch (JSONException e) {
-                        return;
-                    }
-
-                    // add the message to view
-
-
-                }
-            });
-        }
-    };
     private Emitter.Listener onLogin = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {

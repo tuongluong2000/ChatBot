@@ -24,6 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.net.URISyntaxException;
 
 import io.socket.client.IO;
@@ -32,9 +33,8 @@ import io.socket.emitter.Emitter;
 
 public class HomeFragment extends Fragment {
 
-    private final String URL_SERVER = "http://192.168.1.18:3000/";
+    private final String URL_SERVER = "http://192.168.1.40:3000/";
     private Socket mSocket;
-    private ModelContext[] modelContexts;
 
     {
         try {
@@ -46,6 +46,8 @@ public class HomeFragment extends Fragment {
             e.printStackTrace();
         }
     }
+
+    private ModelContext[] modelContexts;
 
     private Emitter.Listener onContext = new Emitter.Listener() {
         @Override
@@ -88,8 +90,11 @@ public class HomeFragment extends Fragment {
                         OnItemClickListener<ModelContext> onClickListener = (view, context) -> {
                             Toast.makeText(getActivity().getApplicationContext(), context.getId(),
                                     Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(getActivity(),ChatActivity.class);
+                            intent.putExtra("context", (Serializable) context);
+                            startActivity(intent);
                         };
-                        RecyclerView recyclerView = getView().findViewById(R.id.rclViewChat);
+                        RecyclerView recyclerView = getActivity().findViewById(R.id.rclViewChat);
                         HomeAdapter homeAdapter = new HomeAdapter(modelContexts, onClickListener);
                         recyclerView.setAdapter(homeAdapter);
                     }

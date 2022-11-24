@@ -1,6 +1,8 @@
 package com.example.chatbot.model;
 
-public class ModelContext {
+import java.io.Serializable;
+
+public class ModelContext implements Serializable {
     private String id;
     private String userid;
     private String adminid;
