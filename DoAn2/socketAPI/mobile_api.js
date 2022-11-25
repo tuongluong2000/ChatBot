@@ -27,7 +27,15 @@ io.sockets.on('connection', (socket) => {
             io.emit('data_context',{data: data, status: "false"});
         else 
             io.emit('data_context',{data: data, status: "true"});
-    }); 
+        }); 
+    socket.on('get_message', async (id)=>{
+        console.log("id context "+ id);
+        var data = await controller.QueryMessage(id);
+        if(data == false)
+            io.emit('data_message',{data: data, status: "false"});
+        else 
+            io.emit('data_message',{data: data, status: "true"});
+        });
     });
 }
 

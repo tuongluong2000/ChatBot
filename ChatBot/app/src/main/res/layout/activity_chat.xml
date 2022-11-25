@@ -28,15 +28,17 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rclViewChat"
+        android:id="@+id/rclViewMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         android:layout_weight="5.5"
         android:divider="#F6F3F3"
         android:transcriptMode="normal"
-        android:verticalScrollbarPosition="right" />
+        android:verticalScrollbarPosition="right"
+        tools:listitem="@layout/layout_message"/>
 
     <LinearLayout
         android:layout_width="match_parent"

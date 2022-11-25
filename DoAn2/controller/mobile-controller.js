@@ -15,4 +15,10 @@ async function QueryContext(userId){
     return data;
 }
 
-module.exports = {CheckLogin, QueryContext}
+async function QueryMessage(contextId){
+    var query= {contextId: new ObjectID(contextId)};
+    var data = await connectiondb.QueryMessage(query,"message");
+    return data;
+}
+
+module.exports = {CheckLogin, QueryContext, QueryMessage}

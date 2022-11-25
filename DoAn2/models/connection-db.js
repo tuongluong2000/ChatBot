@@ -2,6 +2,7 @@ const { Schema } = require('mongoose');
 const { collection } = require('./user-model');
 var usermodel = require('./user-model');
 var contextmodel = require('./context-model');
+var messagemodel = require('./message_model');
 const { Context } = require('@nlpjs/basic');
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/";
@@ -126,5 +127,39 @@ async function QueryContext(query, collection) {
 
 }
 
+async function QueryMessage(query, collection) {
+  const client = new MongoClient(url);
+  var model = [];
+  var i = 0;
+  try {
+    const database = client.db("DoAn");
+    const collect = database.collection(collection);
+    // query for movies that have a runtime less than 15 minutes
+  
+    const data = collect.find(query);
+    // print a message if no documents were found
+    if ((await data.count()) === 0) {
+      console.log("No documents found!");
+      return false;
+    }
+    // replace console.dir with your callback to access individual elements
+    await data.forEach(async function(value){
+       model[i] = new messagemodel({
+        _id: value._id,
+        contextid: value.contextId,
+        senderid: value.senderMessageId,
+        content: value.content,
+        timestamp: "2016-05-18 16:00:00"
+      });
+      i++;
+    });
+    console.log(model);
+    return model;
+  } finally {
+    await client.close();
+  }
 
-module.exports = { Insert, Query, Update, Delete, QueryContext }
+}
+
+
+module.exports = { Insert, Query, Update, Delete, QueryContext, QueryMessage }
