@@ -2,6 +2,9 @@ const { ObjectID } = require('bson');
 const e = require('express');
 var connectiondb = require('../models/connection-db');
 var usermodel = require('../models/user-model');
+var translate = require('translate');
+var trainbotbasic = require('../trainbot/trainbasic');
+
 
 async function CheckLogin(phone, pass) {
     var query = {phone: phone, pass: pass};
@@ -21,4 +24,62 @@ async function QueryMessage(contextId){
     return data;
 }
 
-module.exports = {CheckLogin, QueryContext, QueryMessage}
+async function InsertMessage(contextId,senderMessageId,content,timestamp, sta){
+    
+    var query= [{contextId: new ObjectID(contextId),
+            senderMessageId: new ObjectID(senderMessageId),
+    content: content, timestamp: timestamp}];
+    var data = await connectiondb.Insert(query,"message");
+    
+   if(sta =="Bot"){
+        var answer = await botAnswers(content);
+        if (answer == false)
+        {
+            var query1= [{contextId: new ObjectID(contextId),
+                senderMessageId: "",
+            content: "Sorry, I don't understand", timestamp: timestamp}];
+            var data1 = await connectiondb.Insert(query1,"message");
+        }
+        else {
+            var query1= [{contextId: new ObjectID(contextId),
+                senderMessageId: "",
+            content: answer, timestamp: timestamp}];
+            var data1 = await connectiondb.Insert(query1,"message");
+        }
+    }
+    return data;
+}
+
+async function Translate(message){
+    translate.engine = "google";
+    translate.key = process.env.GOOGLE_KEY;
+    translate.from ="vi";
+    const text = await translate(message, "en");
+    await console.log(text);
+    return text;
+}
+
+async function TranslateEntoVi(message){
+    translate.engine = "google";
+    translate.key = process.env.GOOGLE_KEY;
+    translate.from ="en";
+    const text = await translate(message, "vi");
+    await console.log(text);
+    return text;
+}
+
+async function Trainbot(){
+    await trainbotbasic.TrainBotBasic();
+    botAnswers("who are you");
+}
+
+async function botAnswers(message) {
+    var mess = await Translate(message)
+    var answer = await trainbotbasic.botAnswers(mess);
+    if (answer == undefined) return false;
+    else return answer;
+}
+
+
+module.exports = {CheckLogin, QueryContext, QueryMessage, 
+    InsertMessage, Translate, Trainbot, botAnswers, TranslateEntoVi}

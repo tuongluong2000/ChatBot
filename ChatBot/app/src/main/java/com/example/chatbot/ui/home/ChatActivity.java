@@ -6,8 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,7 +34,7 @@ import io.socket.emitter.Emitter;
 
 public class ChatActivity extends AppCompatActivity {
 
-    private final String URL_SERVER = "http://192.168.1.11:3000/";
+    private final String URL_SERVER = "http://192.168.1.35:3000/";
     private Socket mSocket;
 
     {
@@ -86,6 +89,7 @@ public class ChatActivity extends AppCompatActivity {
                         ChatAdapter chatAdapter = new ChatAdapter(messages, userid,statuss);
                         recyclerView.setAdapter(chatAdapter);
                         recyclerView.setLayoutManager(new LinearLayoutManager(ChatActivity.this));
+                        recyclerView.scrollToPosition(messages.length-1);
                     }
                     else Toast.makeText(ChatActivity.this.getApplicationContext(), "không có context",
                             Toast.LENGTH_LONG).show();
@@ -122,6 +126,36 @@ public class ChatActivity extends AppCompatActivity {
                 Intent i = new Intent(ChatActivity.this, HomeActivity.class);
                 i.putExtra("id",context.getUserid());
                 startActivity(i);
+            }
+        });
+
+        ImageButton imageButton = findViewById(R.id.sendButton);
+        EditText editText = findViewById(R.id.textField);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!editText.getText().toString().equals("")){
+                    mSocket.emit("send_message", context.getId(), userid,
+                            editText.getText().toString(),
+                            new Timestamp(System.currentTimeMillis()).toString(), toolbar.getTitle());
+                    mSocket.on("data_sendmessage", onMessage);
+                    editText.setText("");
+                }
+            }
+        });
+
+        RecyclerView recyclerView = findViewById(R.id.rclViewMessage);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+            }
+        });
+        editText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recyclerView.scrollToPosition(messages.length-1);
             }
         });
     }

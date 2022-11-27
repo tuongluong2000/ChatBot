@@ -21,7 +21,8 @@
     "mongoose": "^6.6.4",
     "nodemon": "^2.0.20",
     "python-shell": "^3.0.1",
-    "socket.io": "^4.5.3"
+    "socket.io": "^4.5.3",
+    "translate": "^1.4.1"
   },
   "description": ""
 }

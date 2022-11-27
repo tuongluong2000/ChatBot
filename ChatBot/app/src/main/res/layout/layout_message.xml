@@ -22,6 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/layout_mess"
+            app:layout_constraintLeft_toLeftOf="parent"
             tools:ignore="MissingConstraints">
             <ImageView
                 android:id="@+id/imageAVT"
@@ -56,6 +57,13 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="10dp"
+            tools:ignore="MissingConstraints" />
+        <ImageView
+            android:id="@+id/image1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
             android:layout_marginEnd="10dp"
             tools:ignore="MissingConstraints" />
 

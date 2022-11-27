@@ -7,7 +7,9 @@ var io = require('socket.io')(server);
 var fs = require("fs")
 server.listen(process.env.POST ||3000);
 
+
 console.log("running api mobile");
+controller.Trainbot();
 
 function Conection() {
 io.sockets.on('connection', (socket) => {
@@ -35,6 +37,15 @@ io.sockets.on('connection', (socket) => {
             io.emit('data_message',{data: data, status: "false"});
         else 
             io.emit('data_message',{data: data, status: "true"});
+        });
+        socket.on('send_message', async (contextid,userid,content,timestamp,sta)=>{
+            console.log("message" +contextid+userid+content,timestamp);
+            var status = await controller.InsertMessage(contextid,userid,content,timestamp,sta);
+            var data  = await controller.QueryMessage(contextid);
+            if (status== true)
+                io.emit('data_sendmessage',{data: data, status: "true"});
+            else 
+                io.emit('data_sendmessage',{data: data, status: "false"});
         });
     });
 }

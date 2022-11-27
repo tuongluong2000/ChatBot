@@ -1,5 +1,6 @@
 package com.example.chatbot.ui.adapter;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +44,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         public void setlayout(){
             ConstraintLayout constraintLayout = viewitem.findViewById(R.id.layout_mess);
             ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) constraintLayout.getLayoutParams();
-            params.endToStart = R.id.image;
+            params.endToEnd = R.id.image;
+            params.startToStart = -1;
+            constraintLayout.requestLayout();
+        }
+        public void setlayout1(){
+            ConstraintLayout constraintLayout = viewitem.findViewById(R.id.layout_mess);
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) constraintLayout.getLayoutParams();
+            params.startToStart = R.id.image1;
+            params.endToEnd = -1;
             constraintLayout.requestLayout();
         }
 
@@ -74,6 +83,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     }
 
     // Replace the contents of a view (invoked by the layout manager)
+    @SuppressLint("ResourceType")
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
 
@@ -83,13 +93,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             viewHolder.setlayout();
             viewHolder.getTextViewcontent().setText(localDataSet[position].getContent());
             viewHolder.getImageView().setImageResource(0);
+            viewHolder.getTextViewcontent().setBackgroundResource(R.drawable.border_massage2);
         }
         else   {
+            viewHolder.setlayout1();
+            viewHolder.getTextViewcontent().setBackgroundResource(R.drawable.border_massage);
             if (status== false)
                 viewHolder.getImageView().setImageResource(R.drawable.bot_drawable);
             else viewHolder.getImageView().setImageResource(R.drawable.person_account_drawable);
             viewHolder.getTextViewcontent().setText(localDataSet[position].getContent());
-
         }
 
 

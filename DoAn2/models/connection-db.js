@@ -18,7 +18,12 @@ async function Insert(data, collection) {
     // this option prevents additional documents from being inserted if one fails
     const options = { ordered: true };
     const result = await collect.insertMany(data, options);
+    if (await result.insertedCount ===0) {
+      console.log("No documents found!");
+      return false;
+    }
     console.log(`${result.insertedCount} documents were inserted`);
+    return true;
   } finally {
     await client.close();
   }
@@ -119,7 +124,6 @@ async function QueryContext(query, collection) {
       });
       i++;
     });
-    console.log(model);
     return model;
   } finally {
     await client.close();
@@ -149,11 +153,10 @@ async function QueryMessage(query, collection) {
         contextid: value.contextId,
         senderid: value.senderMessageId,
         content: value.content,
-        timestamp: "2016-05-18 16:00:00"
+        timestamp: value.timestamp
       });
       i++;
     });
-    console.log(model);
     return model;
   } finally {
     await client.close();
