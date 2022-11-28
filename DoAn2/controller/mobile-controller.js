@@ -4,6 +4,8 @@ var connectiondb = require('../models/connection-db');
 var usermodel = require('../models/user-model');
 var translate = require('translate');
 var trainbotbasic = require('../trainbot/trainbasic');
+var trainnlu = require('../trainbot/trainnlu')
+
 
 
 async function CheckLogin(phone, pass) {
@@ -37,7 +39,7 @@ async function InsertMessage(contextId,senderMessageId,content,timestamp, sta){
         {
             var query1= [{contextId: new ObjectID(contextId),
                 senderMessageId: "",
-            content: "Sorry, I don't understand", timestamp: timestamp}];
+            content: "Xin lỗi, tôi không hiểu", timestamp: timestamp}];
             var data1 = await connectiondb.Insert(query1,"message");
         }
         else {
@@ -70,12 +72,12 @@ async function TranslateEntoVi(message){
 
 async function Trainbot(){
     await trainbotbasic.TrainBotBasic();
-    botAnswers("who are you");
+    await trainnlu.TrainNLU();
 }
 
 async function botAnswers(message) {
     var mess = await Translate(message)
-    var answer = await trainbotbasic.botAnswers(mess);
+    var answer = await trainnlu.botAnswersNLU(mess);
     if (answer == undefined) return false;
     else return answer;
 }

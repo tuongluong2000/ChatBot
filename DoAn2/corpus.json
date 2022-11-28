@@ -34,6 +34,15 @@
             ]
         },
         {
+            "intent": "agent.name",
+            "utterances": [
+                "what is your name"
+            ],
+            "answers": [
+                "Tôi là một trợ lý ảo. Sẳn sàng trợ giúp liền tay, chỉ cần bạn gọi xong ngay tức thì"
+            ]
+        },
+        {
             "intent": "agent.age",
             "utterances": [
                 "your age",

@@ -3,6 +3,7 @@ const { collection } = require('./user-model');
 var usermodel = require('./user-model');
 var contextmodel = require('./context-model');
 var messagemodel = require('./message_model');
+var utterancemodel = require('./utterance_model')
 const { Context } = require('@nlpjs/basic');
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/";
@@ -164,5 +165,35 @@ async function QueryMessage(query, collection) {
 
 }
 
+async function QueryUtterance(query, collection) {
+  const client = new MongoClient(url);
+  var model = [];
+  var i = 0;
+  try {
+    const database = client.db("DoAn");
+    const collect = database.collection(collection);
+    // query for movies that have a runtime less than 15 minutes
+  
+    const data = collect.find(query);
+    // print a message if no documents were found
+    if ((await data.count()) === 0) {
+      console.log("No documents found!");
+      return false;
+    }
+    // replace console.dir with your callback to access individual elements
+    await data.forEach(async function(value){
+       model[i] = new utterancemodel({
+        _id: value._id,
+        domain: value.domain,
+        data: value.data
+      });
+      i++;
+    });
+    return model;
+  } finally {
+    await client.close();
+  }
 
-module.exports = { Insert, Query, Update, Delete, QueryContext, QueryMessage }
+}
+
+module.exports = { Insert, Query, Update, Delete, QueryContext, QueryMessage, QueryUtterance }

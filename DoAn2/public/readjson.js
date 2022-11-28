@@ -33,3 +33,10 @@ async function prepareCorpus() {
         });
       });
   }
+
+
+  model.forEach(async function(value){
+    value.data.forEach(async function(da){
+      console.log(da)
+    })
+  })
