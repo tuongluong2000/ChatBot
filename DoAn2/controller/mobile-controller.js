@@ -4,7 +4,8 @@ var connectiondb = require('../models/connection-db');
 var usermodel = require('../models/user-model');
 var translate = require('translate');
 var trainbotbasic = require('../trainbot/trainbasic');
-var trainnlu = require('../trainbot/trainnlu')
+var trainnlu = require('../trainbot/trainnlu');
+var fs = require('fs');
 
 
 
@@ -74,6 +75,8 @@ async function Trainbot(){
     await trainbotbasic.TrainBotBasic();
     await trainnlu.TrainNLU();
 }
+
+
 
 async function botAnswers(message) {
     var mess = await Translate(message)
