@@ -2,7 +2,6 @@
 
 
 
-
 ## console.hear
 // compiler=javascript
 if (message === 'quit') {

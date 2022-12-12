@@ -34,7 +34,7 @@ import io.socket.emitter.Emitter;
 
 public class ChatActivity extends AppCompatActivity {
 
-    private final String URL_SERVER = "http://192.168.1.35:3000/";
+    private final String URL_SERVER = "http://192.168.1.31:3000/";
     private Socket mSocket;
 
     {

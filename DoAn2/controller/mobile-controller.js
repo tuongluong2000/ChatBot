@@ -74,6 +74,7 @@ async function TranslateEntoVi(message){
 async function Trainbot(){
     await trainbotbasic.TrainBotBasic();
     await trainnlu.TrainNLU();
+    console.log("train bot complete");
 }
 
 

@@ -12,7 +12,11 @@ const ContextSchema = new Schema({
     },
     suggested:[{ 
         type: String,
-        required: true}] 
+        required: true}],
+    nameuser: {
+        type: String,
+        require:true
+    } 
 });
 
 module.exports = mongoose.model('Context', ContextSchema);

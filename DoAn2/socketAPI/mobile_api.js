@@ -11,7 +11,7 @@ server.listen(process.env.POST ||3000);
 console.log("running api mobile");
 controller.Trainbot();
 
-function Conection() {
+async function Conection() {
 io.sockets.on('connection', (socket) => {
     console.log('User Conncetion');
     socket.on('user_login', async (phone,pass) => {
