@@ -52,11 +52,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/imageAVT"
             app:layout_constraintTop_toBottomOf="@+id/textview_name_room"
-            tools:text="3249857, pwoei owirgfhjow, Kanpur Nagar, Uttar Pradesh, 208002" />
+            tools:text="3249857, pwoei owirgfhjow" />
 
-
-
-
+        <ImageButton
+            android:id="@+id/button_delete"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/ic_launcher_delete_foreground"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="MissingConstraints"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

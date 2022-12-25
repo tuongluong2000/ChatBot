@@ -1,5 +1,6 @@
 const { Schema } = require('mongoose');
 const { collection } = require('./user-model');
+const { ObjectID } = require('bson');
 var usermodel = require('./user-model');
 var contextmodel = require('./context-model');
 var messagemodel = require('./message_model');
@@ -19,7 +20,7 @@ async function Insert(data, collection) {
     // this option prevents additional documents from being inserted if one fails
     const options = { ordered: true };
     const result = await collect.insertMany(data, options);
-    if (await result.insertedCount ===0) {
+    if (await result.insertedCount === 0) {
       console.log("No documents found!");
       return false;
     }
@@ -31,14 +32,14 @@ async function Insert(data, collection) {
 
 }
 
-async function Query(query, collection) {
+async function QueryUser(query, collection) {
   const client = new MongoClient(url);
   var user;
   try {
     const database = client.db("DoAn");
     const collect = database.collection(collection);
     // query for movies that have a runtime less than 15 minutes
-  
+
     const data = collect.find(query);
     // print a message if no documents were found
     if ((await data.count()) === 0) {
@@ -46,7 +47,7 @@ async function Query(query, collection) {
       return false;
     }
     // replace console.dir with your callback to access individual elements
-    await data.forEach(async function(value){
+    await data.forEach(async function (value) {
       user = new usermodel({
         _id: value._id,
         name: value.name,
@@ -92,8 +93,30 @@ async function Delete(query, collection) {
     const result = await collect.deleteOne(query);
     if (result.deletedCount === 1) {
       console.log("Successfully deleted one document.");
+      return true;
     } else {
       console.log("No documents matched the query. Deleted 0 documents.");
+      return false;
+    }
+  } finally {
+    await client.close();
+  }
+}
+
+async function deleteMany(query, collection) {
+  const client = new MongoClient(url);
+
+  try {
+    const database = client.db("DoAn");
+    const collect = database.collection(collection);
+
+    const result = await collect.deleteMany(query);
+    if (result.deletedCount === 0) {
+      console.log("No documents matched the query. Deleted 0 documents.");
+      return true;
+    } else {
+      console.log("Successfully deleted " + result.deletedCount.toString() + " document.");
+      return false;
     }
   } finally {
     await client.close();
@@ -108,7 +131,7 @@ async function QueryContext(query, collection) {
     const database = client.db("DoAn");
     const collect = database.collection(collection);
     // query for movies that have a runtime less than 15 minutes
-  
+
     const data = collect.find(query);
     // print a message if no documents were found
     if ((await data.count()) === 0) {
@@ -116,12 +139,15 @@ async function QueryContext(query, collection) {
       return false;
     }
     // replace console.dir with your callback to access individual elements
-    await data.forEach(async function(value){
-       model[i] = new contextmodel({
+    await data.forEach(async function (value) {
+      model[i] = new contextmodel({
         _id: value._id,
         userid: value.userId,
         adminid: value.adminId,
-        suggested: value.suggestedMessage
+        suggested: value.suggestedMessage,
+        username: "",
+        content:"",
+        timestamp:""
       });
       i++;
     });
@@ -132,6 +158,8 @@ async function QueryContext(query, collection) {
 
 }
 
+
+
 async function QueryMessage(query, collection) {
   const client = new MongoClient(url);
   var model = [];
@@ -140,7 +168,7 @@ async function QueryMessage(query, collection) {
     const database = client.db("DoAn");
     const collect = database.collection(collection);
     // query for movies that have a runtime less than 15 minutes
-  
+
     const data = collect.find(query);
     // print a message if no documents were found
     if ((await data.count()) === 0) {
@@ -148,8 +176,8 @@ async function QueryMessage(query, collection) {
       return false;
     }
     // replace console.dir with your callback to access individual elements
-    await data.forEach(async function(value){
-       model[i] = new messagemodel({
+    await data.forEach(async function (value) {
+      model[i] = new messagemodel({
         _id: value._id,
         contextid: value.contextId,
         senderid: value.senderMessageId,
@@ -173,7 +201,7 @@ async function QueryUtterance(query, collection) {
     const database = client.db("DoAn");
     const collect = database.collection(collection);
     // query for movies that have a runtime less than 15 minutes
-  
+
     const data = collect.find(query);
     // print a message if no documents were found
     if ((await data.count()) === 0) {
@@ -181,8 +209,8 @@ async function QueryUtterance(query, collection) {
       return false;
     }
     // replace console.dir with your callback to access individual elements
-    await data.forEach(async function(value){
-       model[i] = new utterancemodel({
+    await data.forEach(async function (value) {
+      model[i] = new utterancemodel({
         _id: value._id,
         domain: value.domain,
         data: value.data
@@ -196,4 +224,4 @@ async function QueryUtterance(query, collection) {
 
 }
 
-module.exports = { Insert, Query, Update, Delete, QueryContext, QueryMessage, QueryUtterance }
+module.exports = { Insert, QueryUser, Update, Delete, deleteMany, QueryContext, QueryMessage, QueryUtterance }

@@ -48,26 +48,50 @@
         <entry key="..\:/ChatBot/app/src/main/res/mipmap-anydpi-v26/ic_launcher_bot.xml" value="0.1" />
         <entry key="..\:/ChatBot/app/src/main/res/mipmap-anydpi-v26/ic_launcher_bot_round.xml" value="0.176" />
         <entry key="..\:/ChatBot/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.176" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable-v24/avatar_background.xml" value="0.1" />
         <entry key="..\:/doan/ChatBot/app/src/main/res/drawable-v24/border_massage2.xml" value="0.1935" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable-v24/bottom_nav_selector.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable-v24/ic_add_48.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable-v24/ic_baseline_person_24.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable-v24/ic_filled_logout_24.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable-v24/ic_filled_person_24.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable-v24/ic_launcher_bot_foreground.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable-v24/ic_outline_arrow_back_24.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable-v24/ic_outline_email_24.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable-v24/ic_outline_phone_android_24.xml" value="0.1" />
         <entry key="..\:/doan/ChatBot/app/src/main/res/drawable-v24/ic_outlined_home_24.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable-v24/ic_outlined_person_24.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable-v24/ic_send_black_24dp.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable-v24/person_account_drawable.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable-v24/signout_account_drawable.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable-v24/textwhite.xml" value="0.1" />
         <entry key="..\:/doan/ChatBot/app/src/main/res/drawable/border_massage.xml" value="0.1935" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable/bot_drawable.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable/ic_launcher_add.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable/ic_launcher_bot_background.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable/ic_launcher_bot_foreground.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable/ic_launcher_delete_background.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable/ic_launcher_delete_foreground.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/drawable/login_bg_img.xml" value="0.1" />
         <entry key="..\:/doan/ChatBot/app/src/main/res/layout/activity_chat.xml" value="0.16" />
         <entry key="..\:/doan/ChatBot/app/src/main/res/layout/activity_home.xml" value="0.1" />
         <entry key="..\:/doan/ChatBot/app/src/main/res/layout/activity_otp.xml" value="0.22871376811594202" />
-        <entry key="..\:/doan/ChatBot/app/src/main/res/layout/activity_signup.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/layout/activity_signup.xml" value="0.16" />
         <entry key="..\:/doan/ChatBot/app/src/main/res/layout/fragment_account.xml" value="0.1" />
         <entry key="..\:/doan/ChatBot/app/src/main/res/layout/fragment_home.xml" value="0.1" />
-        <entry key="..\:/doan/ChatBot/app/src/main/res/layout/fragment_login.xml" value="0.12132725430597771" />
-        <entry key="..\:/doan/ChatBot/app/src/main/res/layout/fragment_profile.xml" value="0.1" />
-        <entry key="..\:/doan/ChatBot/app/src/main/res/layout/fragment_signup.xml" value="0.22871376811594202" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/layout/fragment_login.xml" value="0.25" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/layout/fragment_profile.xml" value="0.16" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/layout/fragment_signup.xml" value="0.1" />
         <entry key="..\:/doan/ChatBot/app/src/main/res/layout/layout_home_top_app_bar.xml" value="0.1" />
         <entry key="..\:/doan/ChatBot/app/src/main/res/layout/layout_loader_card.xml" value="0.1" />
         <entry key="..\:/doan/ChatBot/app/src/main/res/layout/layout_menu_add.xml" value="0.1" />
         <entry key="..\:/doan/ChatBot/app/src/main/res/layout/layout_message.xml" value="0.12222222222222222" />
         <entry key="..\:/doan/ChatBot/app/src/main/res/layout/layout_no_icon_app_bar.xml" value="0.1" />
-        <entry key="..\:/doan/ChatBot/app/src/main/res/layout/layout_room_item.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/layout/layout_room_item.xml" value="0.128" />
         <entry key="..\:/doan/ChatBot/app/src/main/res/layout/layout_top_bar.xml" value="0.1" />
         <entry key="..\:/doan/ChatBot/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.13125" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
+        <entry key="..\:/doan/ChatBot/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />
       </map>
     </option>
   </component>
@@ -76,5 +100,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.16" />
+      </ProjectState>
+    </option>
   </component>
 </project>

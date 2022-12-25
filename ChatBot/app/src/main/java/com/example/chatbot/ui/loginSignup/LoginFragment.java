@@ -10,10 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.chatbot.R;
 import com.example.chatbot.ui.home.HomeActivity;
@@ -29,7 +32,7 @@ import io.socket.emitter.Emitter;
 
 public class LoginFragment extends Fragment {
 
-    private final String URL_SERVER = "http://192.168.1.31:3000/";
+    private final String URL_SERVER = "http://192.168.1.21:3000/";
     private Socket mSocket;
 
     {
@@ -87,6 +90,7 @@ public class LoginFragment extends Fragment {
         EditText phone = root.findViewById(R.id.login_mobile_edit_text);
         EditText pass = root.findViewById(R.id.login_password_edit_text);
         Button loginBtn = root.findViewById(R.id.login_login_btn);
+        TextView signup = root.findViewById(R.id.login_signup_text_view);
 
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
@@ -95,6 +99,20 @@ public class LoginFragment extends Fragment {
 
                 mSocket.emit("user_login",phone.getText().toString(),pass.getText().toString());
 
+            }
+        });
+        signup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSocket.disconnect();
+                Fragment fragment = new SignupFragment();
+                Bundle bundle  = new Bundle();
+                bundle.putString("url",URL_SERVER);
+                fragment.setArguments(bundle);
+                FragmentManager manager = getActivity().getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                transaction.replace(R.id.nav_host_fragment,fragment,null);
+                transaction.commit();
             }
         });
         return root;

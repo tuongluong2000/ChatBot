@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,8 +34,9 @@ import io.socket.emitter.Emitter;
 
 public class HomeFragment extends Fragment {
 
-    private final String URL_SERVER = "http://192.168.1.31:3000/";
+    private final String URL_SERVER = "http://192.168.1.21:3000/";
     private Socket mSocket;
+    private Boolean isadmin = false;
 
     {
         try {
@@ -68,6 +70,7 @@ public class HomeFragment extends Fragment {
                     // add the message to view
                     if (status.equals("true")) {
                         modelContexts = new ModelContext[contextlist.length()];
+                        isadmin = false;
                         for(int i =0; i< contextlist.length();i++)
                         {
                             try {
@@ -79,6 +82,7 @@ public class HomeFragment extends Fragment {
                                 }
                                 ModelContext model = new ModelContext(context.getString("_id"),
                                         context.getString("userid"),context.getString("adminid"), sug);
+                                if(isadmin ==false){if(!model.getAdminid().equals("")) isadmin = true;}
                                 modelContexts[i] = model;
                                 Log.d("hello", model.getId());
 
@@ -94,8 +98,13 @@ public class HomeFragment extends Fragment {
                             intent.putExtra("context", (Serializable) context);
                             startActivity(intent);
                         };
+                        OnItemClickListener<ModelContext> onDelete = (view, context)->{
+                            Toast.makeText(getActivity().getApplicationContext(),"Xóa thành công",
+                                    Toast.LENGTH_LONG).show();
+                            mSocket.emit("delete_context", context.getId(),context.getUserid());
+                        };
                         RecyclerView recyclerView = getActivity().findViewById(R.id.rclViewChat);
-                        HomeAdapter homeAdapter = new HomeAdapter(modelContexts, onClickListener);
+                        HomeAdapter homeAdapter = new HomeAdapter(modelContexts, onClickListener,onDelete);
                         recyclerView.setAdapter(homeAdapter);
                     }
                     else Toast.makeText(getActivity().getApplicationContext(), "không có context",
@@ -123,6 +132,27 @@ public class HomeFragment extends Fragment {
         mSocket.emit("get_context",id);
         mSocket.on("data_context", onContext);
 
+        TextView addadmin = root.findViewById(R.id.textview_add_admin);
+        TextView addbot = root.findViewById(R.id.textview_add_bot);
+
+        addadmin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SetVisibility(layout);
+                if (isadmin == false) mSocket.emit("add_admin",id);
+                else Toast.makeText(getActivity().getApplicationContext(),"Chat admin chỉ được tạo 1 lần",Toast.LENGTH_LONG).show();
+            }
+        });
+        addbot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SetVisibility(layout);
+                mSocket.emit("add_bot",id);
+            }
+        });
+
+
+
         return root;
     }
 
@@ -133,4 +163,9 @@ public class HomeFragment extends Fragment {
         else view.setVisibility(View.INVISIBLE);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        mSocket.disconnect();
+    }
 }

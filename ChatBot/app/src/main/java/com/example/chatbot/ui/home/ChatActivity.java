@@ -34,7 +34,7 @@ import io.socket.emitter.Emitter;
 
 public class ChatActivity extends AppCompatActivity {
 
-    private final String URL_SERVER = "http://192.168.1.31:3000/";
+    private final String URL_SERVER = "http://192.168.1.21:3000/";
     private Socket mSocket;
 
     {
@@ -51,6 +51,56 @@ public class ChatActivity extends AppCompatActivity {
     private boolean statuss;
     private String userid;
     private ModelMessage[] messages;
+    private ModelContext context;
+
+    private Emitter.Listener onAdminMessage = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ChatActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    JSONArray messagelist;
+                    String status;
+                    String contextid;
+                    try {
+                        messagelist = data.getJSONArray("data");
+                        status = data.getString("status");
+                        contextid = data.getString("contextid");
+                    } catch (JSONException e) {
+                        return;
+                    }
+                    // add the message to view
+                    if (status.equals("true")&&context.getId().equals(contextid)) {
+                        messages = new ModelMessage[messagelist.length()];
+                        for(int i =0; i< messagelist.length();i++)
+                        {
+                            try {
+                                JSONObject mes = messagelist.getJSONObject(i);
+                                ModelMessage model = new ModelMessage(mes.getString("_id"),mes.getString("contextid"),
+                                        mes.getString("senderid"),mes.getString("content"),
+                                        (mes.getString("timestamp")));
+                                messages[i] = model;
+                                Log.d("model", model.getId());
+
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        RecyclerView recyclerView = ChatActivity.this.findViewById(R.id.rclViewMessage);
+                        ChatAdapter chatAdapter = new ChatAdapter(messages, userid,statuss);
+                        recyclerView.setAdapter(chatAdapter);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(ChatActivity.this));
+                        recyclerView.scrollToPosition(messages.length-1);
+                    }
+                    else Toast.makeText(ChatActivity.this.getApplicationContext(), "không có context",
+                            Toast.LENGTH_LONG).show();
+
+                }
+            });
+        }
+    };
 
     private Emitter.Listener onMessage = new Emitter.Listener() {
         @Override
@@ -76,7 +126,7 @@ public class ChatActivity extends AppCompatActivity {
                                 JSONObject mes = messagelist.getJSONObject(i);
                                 ModelMessage model = new ModelMessage(mes.getString("_id"),mes.getString("contextid"),
                                         mes.getString("senderid"),mes.getString("content"),
-                                        Timestamp.valueOf(mes.getString("timestamp")));
+                                        (mes.getString("timestamp")));
                                 messages[i] = model;
                                 Log.d("model", model.getId());
 
@@ -105,7 +155,7 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
         mSocket.connect();
         Intent intent = getIntent();
-        ModelContext context = (ModelContext) intent.getSerializableExtra("context");
+        context = (ModelContext) intent.getSerializableExtra("context");
         Toast.makeText(this, context.getId(), Toast.LENGTH_SHORT).show();
         userid = context.getUserid();
         MaterialToolbar toolbar = findViewById(R.id.topAppBar);
@@ -119,6 +169,7 @@ public class ChatActivity extends AppCompatActivity {
         }
         mSocket.emit("get_message",context.getId());
         mSocket.on("data_message", onMessage);
+        mSocket.on("user_admin_sent_data_message", onAdminMessage);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

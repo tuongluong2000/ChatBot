@@ -3,6 +3,7 @@ package com.example.chatbot.ui.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
 
     private ModelContext[] localDataSet;
     private static OnItemClickListener<ModelContext> onclickListener;
+    private static OnItemClickListener<ModelContext> ondelete;
 
     /**
      * Provide a reference to the type of views that you are using
@@ -26,6 +28,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         private final TextView textViewname;
         private final ImageView imageView;
         private final View viewitem;
+        private final ImageButton imageButton;
 
         public ViewHolder(View view) {
             super(view);
@@ -34,6 +37,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
             textViewcontent = view.findViewById(R.id.textview_content_room);
             textViewname = view.findViewById(R.id.textview_name_room);
             imageView = view.findViewById(R.id.imageAVT);
+            imageButton = view.findViewById(R.id.button_delete);
             viewitem= view;
         }
 
@@ -44,10 +48,14 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
             return textViewname;
         }
         public ImageView getImageView(){return imageView;}
+        public ImageButton getImageButton(){return imageButton;}
 
         private void clickItem(ModelContext item)
         {
             viewitem.setOnClickListener(view ->  onclickListener.onItemClicked(view, item));
+        }
+        private void clickDelete(ModelContext item){
+            imageButton.setOnClickListener(view -> ondelete.onItemClicked(view, item));
         }
     }
 
@@ -57,9 +65,10 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
      * @param dataSet String[] containing the data to populate views to be used
      * by RecyclerView.
      */
-    public HomeAdapter(ModelContext[] dataSet, OnItemClickListener<ModelContext> onClickListener) {
+    public HomeAdapter(ModelContext[] dataSet, OnItemClickListener<ModelContext> onClickListener,OnItemClickListener<ModelContext> onDelete) {
         localDataSet = dataSet;
         this.onclickListener = onClickListener;
+        this.ondelete = onDelete;
     }
 
     // Create new views (invoked by the layout manager)
@@ -89,6 +98,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
             viewHolder.getImageView().setImageResource(R.drawable.person_account_drawable);
         }
         viewHolder.clickItem(localDataSet[position]);
+        viewHolder.clickDelete(localDataSet[position]);
 
     }
 

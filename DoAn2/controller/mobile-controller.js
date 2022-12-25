@@ -11,7 +11,13 @@ var fs = require('fs');
 
 async function CheckLogin(phone, pass) {
     var query = {phone: phone, pass: pass};
-    const data = await connectiondb.Query(query,"user");
+    const data = await connectiondb.QueryUser(query,"user");
+    return data;
+}
+
+async function QueryUser(userid) {
+    var query = {_id: new ObjectID(userid)};
+    const data = await connectiondb.QueryUser(query,"user");
     return data;
 }
 
@@ -53,6 +59,39 @@ async function InsertMessage(contextId,senderMessageId,content,timestamp, sta){
     return data;
 }
 
+async function InsertUser(name,phone,mail,pass){
+    
+    var query= [{name: name,
+            phone: phone,
+    Mail: mail, pass: pass}];
+    var data = await connectiondb.Insert(query,"user");
+    return data;
+}
+
+async function InsertContext(userid,status){
+    if(status==true){
+        var query= [{userId: new ObjectID(userid),
+            adminId: new ObjectID("6374fedad36a12dad2ba4b56"),
+            suggestedMessage:[] }];
+    var data = await connectiondb.Insert(query,"context");
+    } else {
+        var query= [{userId: new ObjectID(userid),
+            adminId: "",
+            suggestedMessage:[] }];
+    var data = await connectiondb.Insert(query,"context");
+    }
+    
+    return data;
+}
+
+async function DeleteContext(contextid){
+    var query= {_id: new ObjectID(contextid)};
+    var data = await connectiondb.Delete(query,"context");
+    var queryMess= {contextId: new ObjectID(contextid)};
+    var mes = await connectiondb.deleteMany(queryMess,'message');
+    return data;
+}
+
 async function Translate(message){
     translate.engine = "google";
     translate.key = process.env.GOOGLE_KEY;
@@ -88,4 +127,5 @@ async function botAnswers(message) {
 
 
 module.exports = {CheckLogin, QueryContext, QueryMessage, 
-    InsertMessage, Translate, Trainbot, botAnswers, TranslateEntoVi}
+    InsertMessage, Translate, Trainbot, botAnswers, TranslateEntoVi,
+    InsertUser, InsertContext, DeleteContext, QueryUser}

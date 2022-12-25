@@ -6,12 +6,19 @@
     android:layout_height="wrap_content"
     tools:context=".ui.home.ProfileFragment">
 
-    <include
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/profile_top_app_bar"
-        layout="@layout/layout_top_bar"
+        style="@style/Widget.MaterialComponents.Toolbar.Primary"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true" />
+        android:layout_height="50dp"
+        android:background="@color/white"
+        app:buttonGravity="center_vertical"
+        app:contentInsetStartWithNavigation="0dp"
+        app:navigationIcon="@drawable/ic_outline_arrow_back_24"
+        app:navigationIconTint="@color/gray"
+        app:titleTextAppearance="@style/AppBarTitleStyle"
+        app:titleTextColor="@color/black"
+        tools:title="@string/app_name" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -113,7 +120,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="16dp"
             android:layout_weight="1"
-            android:background="@color/white"
+            android:backgroundTint="@color/light_gray"
             android:paddingStart="32dp"
             android:paddingEnd="32dp"
             android:text="Đổi mật khẩu"

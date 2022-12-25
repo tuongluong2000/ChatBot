@@ -1,38 +1,70 @@
 
 var controller = require('../controller/web-controller');
-var express = require('express');
-var app = express();
-var server = require('http').createServer(app);
-
-var io = require('socket.io')(server, {
-    cors: {
-        origin: "*",
-    }
-});
-var fs = require("fs")
-server.listen(process.env.POST || 3001);
 
 
 console.log("running api web");
 
-async function Conection() {
+async function Conection(io) {
     io.sockets.on('connection', (socket) => {
         console.log('Useradmin Conncetion');
+        socket.join("6374fedad36a12dad2ba4b56")
         socket.on('adminLogin', async (phone, pass) => {
             console.log(phone + " login");
             var data = await controller.CheckLogin(phone, pass);
             if (data == false)
-                io.emit('admin_login_emit', { user_name: phone, status: "fales" });
+            io.to("6374fedad36a12dad2ba4b56").emit('admin_login_emit', { user_name: phone, status: "fales" });
             else
-                io.emit('admin_login_emit', { user_name: data._id, status: "true" });
+            io.to("6374fedad36a12dad2ba4b56").emit('admin_login_emit', { user_name: data._id.toString(), status: "true" });
         });
         socket.on('admin-get-context', async (id) => {
             console.log("id admin " + id);
             var data = await controller.QueryContext(id);
-            if (data == false)
-                io.emit('admin_data_context', { data: data, status: "false" });
-            else
-                io.emit('admin_data_context', { data: data, status: "true" });
+            if (data == false){
+                io.to("6374fedad36a12dad2ba4b56").emit('admin_data_context', { data: data, status: "false" });
+                console.log("false");}
+            else{
+                for(let i = 0; i<data.length;i++)
+                {
+                    socket.join(data[i]._id.toString());
+                }
+                console.log(data);
+                io.to("6374fedad36a12dad2ba4b56").emit('admin_data_context', { data: data, status: "true"});
+            }
+        });
+        socket.on('admin-get-message', async (id) => {
+            console.log("id context " + id);
+            var data = await controller.QueryMessage(id);
+            if (data == false){
+                io.to("6374fedad36a12dad2ba4b56").emit('admin_data_message', { data: data, status: "false" });
+                console.log("false");}
+            else{
+                console.log(data);
+                io.to("6374fedad36a12dad2ba4b56").emit('admin_data_message', { data: data, status: "true" });
+            }
+        });
+        socket.on('admin-sent-message', async (contextid,adminid,content,timestamp) => {
+            console.log("id context " + contextid);
+            var data = await controller.InsertMessage(contextid,adminid,content,timestamp);
+            socket.join(contextid)
+            if (data == false){
+                console.log("false");}
+            else{
+                console.log("true");
+                var datamess = await controller.QueryMessage(contextid);
+                io.to("6374fedad36a12dad2ba4b56").emit('admin_data_message', { data: datamess, status: "true"});
+                io.to(contextid).emit('user_admin_sent_data_message', { data: datamess, status: "true",contextid: contextid});
+            }
+        });
+        socket.on('admin-get-message-new', async (id) => {
+            console.log("id context  message" + id);
+            var data = await controller.QueryMessage(id);
+            if (data == false){
+                io.to("6374fedad36a12dad2ba4b56").emit('admin_data_message_new', { data: data, status: "false" });
+                console.log("false");}
+            else{
+                console.log(data);
+                io.to("6374fedad36a12dad2ba4b56").emit('admin_data_message_new', { data: data, status: "true" });
+            }
         });
     });
 }

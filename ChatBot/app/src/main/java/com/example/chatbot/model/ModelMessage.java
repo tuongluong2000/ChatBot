@@ -1,15 +1,13 @@
 package com.example.chatbot.model;
 
-import java.sql.Timestamp;
-
 public class ModelMessage {
     private String id;
     private String contextid;
     private String senderid;
     private String content;
-    private Timestamp timestamp;
+    private String timestamp;
 
-    public ModelMessage(String id, String contextid, String senderid, String content, Timestamp timestamp) {
+    public ModelMessage(String id, String contextid, String senderid, String content, String timestamp) {
         this.id = id;
         this.contextid = contextid;
         this.senderid = senderid;
@@ -49,11 +47,11 @@ public class ModelMessage {
         this.content = content;
     }
 
-    public Timestamp getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 }

@@ -1,10 +1,14 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import socketIOClient from "socket.io-client";
+import '../public/css/bootstrap.min.css'
+import '../public/css/fontawesome.min.css'
+import '../public/css/templatemo-style.css'
+import '../public/js/bootstrap.js'
 
 function LoginForm()
 {
-    const host = "http://localhost:3001";
+    const host = "http://localhost:3000";
     const [ username, setUsername ] = useState('');
     const [ password, setPassword ] = useState('');
     const [ error, setError ] = useState('');
