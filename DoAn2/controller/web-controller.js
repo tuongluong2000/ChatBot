@@ -21,6 +21,8 @@ async function QueryContext(adminId){
         var mess = await connectiondb.QueryMessage(query2,'message')
         if(user !=false)
             data[i].username = user.name;
+            data[i].email = user.mail;
+            data[i].mobile = user.phone;
         if(mess != false){
             data[i].content = mess[mess.length-1].content;
             data[i].timestamp = mess[mess.length-1].timestamp;
@@ -33,6 +35,12 @@ async function QueryContext(adminId){
 async function QueryUser(userid) {
     var query = {_id: new ObjectID(userid)};
     const data = await connectiondb.QueryUser(query,"user");
+    return data;
+}
+
+async function QueryAllUser(){
+    var query = {decentralize: "user"}
+    const data = await connectiondb.QueryManyUser(query,"user");
     return data;
 }
 
@@ -51,4 +59,4 @@ async function InsertMessage(contextId,senderMessageId,content,timestamp){
     return data;
 }
 
-module.exports = {CheckLogin, QueryContext, QueryUser, QueryMessage, InsertMessage}
+module.exports = {CheckLogin, QueryContext, QueryUser, QueryMessage, InsertMessage, QueryAllUser}

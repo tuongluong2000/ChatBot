@@ -22,7 +22,7 @@ function Chat(props) {
     const host = "http://localhost:3000";
     const [Contextid, setCId] = useState('');
     const [userid, setUserId] = useState("");
-    const [username, setUsername] = useState('User');
+    const [userlist, setUserList] = useState();
     const [da, setData] = useState();
     const [daMes, setDataMes] = useState({});
     const [message, setMessage] = useState();
@@ -31,9 +31,14 @@ function Chat(props) {
     const [isChat, setChat] = useState(false);
     const [isAc, setAc] = useState(false);
     const [inputmess, setInputMess] = useState('');
-    var id;
-    const [check, setcheck] = useState();
-
+    const [search, setSearch] = useState('');
+    const [edituser, setEditUser] = useState();
+    const [email, setEmail] = useState('');
+    const [phone,setPhone] = useState('');
+    const [name,setName] = useState('');
+    const [pass,setPass] = useState('');
+    const [repass,setRepass] = useState('');
+    const [luser, setLUser] = useState();
     useEffect(() => {
         socketRef.current = socketIOClient.connect(host)
         socketRef.current.emit('admin-get-context', props.idadmin);
@@ -53,15 +58,21 @@ function Chat(props) {
         socketRef.current.on('admin_user_new_context', data => {
             socketRef.current.emit('admin-get-context', props.idadmin);
         })
-        socketRef.current.on('admin-user-new-message',async  dataa => {
+        socketRef.current.on('admin-user-new-message', async dataa => {
             socketRef.current.emit('admin-get-context', props.idadmin);
-            if(dataa.contextid == Contextid)
-            socketRef.current.emit('admin-get-message-new', dataa.contextid.toString());
+            if (dataa.contextid == Contextid)
+                socketRef.current.emit('admin-get-message-new', dataa.contextid.toString());
         });
         socketRef.current.on('admin_data_message_new', data => {
             if (data.status == "true") {
                 setMessage(data.data);
             }
+        });
+        socketRef.current.on('admin_data_user', data => {
+            console.log(data.data);
+            setUserList(data.data);
+            if(luser == undefined)
+            setLUser(data.data);
         });
         return () => {
             socketRef.current.disconnect();
@@ -105,77 +116,8 @@ function Chat(props) {
         'November',
         'December'
     ];
-    const a = (<div>
-        <div className="chat-nav">
-            <div className="chat-nav-title">ADMIN</div>
-            <div className="logout"><button className="button" onClick={logout}> Logout</button></div>
-        </div>
-        <div className="chat-body">
-            <div className="chat-context">
-                <div className="chat-title"> Chats </div>
-                <div className="chats-scroll">renderContext</div>
-            </div>
-            <div className="chat-mess">
-                <div></div>
-            </div>
-        </div>
-    </div>)
-    const options = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top',
-            },
-            title: {
-                display: true,
-                text: 'Latest Hits Chart',
-                color: 'white'
-            },
-        },
-        color: [
-            'white',    // color for data at index 0
-        ],
-        maintainAspectRatio: false,
-        scales: {
-            yAxes: {
-                grid: {
-                    drawBorder: true,
-                    color: '#FFFFFF',
-                },
-                ticks: {
-                    beginAtZero: true,
-                    color: 'white',
-                    fontSize: 12,
-                }
-            },
-            xAxes: {
-                grid: {
-                    drawBorder: true,
-                    color: '#FFFFFF',
-                },
-                ticks: {
-                    beginAtZero: true,
-                    color: 'white',
-                    fontSize: 12,
-                },
-
-            },
-        }
-    };
 
     const labels = months({ count: 12 }, MONTHS);
-    const data = {
-        labels: labels,
-        datasets: [{
-            label: 'My First Dataset',
-            data: [0, 59, 80, 81, 56, 55, 100],
-            borderColor: 'rgb(75, 192, 192)',
-            backgroundColor: 'rgb(75, 192, 192)',
-
-        }],
-
-
-    }
     const optionsLine = {
         scales: {
             yAxes: [
@@ -202,7 +144,7 @@ function Chat(props) {
             'white',    // color for data at index 0
         ],
     };
-
+    const dtline = dataline(userlist)
     const configLine = {
         type: "line",
 
@@ -210,7 +152,7 @@ function Chat(props) {
         datasets: [
             {
                 label: "Latest Hits",
-                data: [33, 45, 37, 40, 55, 74, 69, 80, 70, 52, 60, 77],
+                data: dtline,
                 fill: false,
                 borderColor: "rgb(252,252,252)",
                 cubicInterpolationMode: "monotone",
@@ -281,16 +223,49 @@ function Chat(props) {
             setInputMess('');
         }
     }
+    const searchUser = (dt, value) => {
+        setSearch(value)
+        if (value != "" && value != undefined && value != null && value != " ") {
+            value= value.toString()
+            var data = [];
+            for (let i = 0; i < dt.length; i++) {
+                let dtt = dt[i]
+                if (value == dtt.name || value == dtt.mail || value == dtt.phone)
+                    data.push(dtt);
+            }
+            setLUser(data);
+            console.log(luser)
+        } else {
+            setLUser(userlist);
+            console.log(luser)
+        }
+    }
+    const renderUser = luser ? (
+        userlist.map((data) =>
+            <tr onClick={() => { setName(data.name) }}>
+                <td><b>{data.stt}</b></td>
+                <td><b>{data.name}</b></td>
+                <td><b>{data.phone}</b></td>
+                <td><b>{data.mail}</b></td>
+                <td><b>{data.date}</b></td>
+            </tr>
+        )) : (<tr>
+            <td><b>0001</b></td>
+            <td><b>User</b></td>
+            <td><b>012345678</b></td>
+            <td><b>user1@gmail.com</b></td>
+            <td>08:00, 18 NOV 2022</td>
+        </tr>)
 
     const renderContext = da ? (da.map((data) =>
         <div>
             {isNull(data) ? (
-                <button className="button1" key={data._id} onClick={async () => { 
+                <button className="button1" key={data._id} onClick={async () => {
                     var a = await data
                     setDataMes(a);
-                    setCId(data._id) ;
-                    await socketRef.current.emit('admin-get-message', data._id) 
-                    }}><div className="chat-username">{data.username}</div> <br></br><div className="chat-content">{data.content}</div>
+                    setCId(data._id);
+                    await socketRef.current.emit('admin-get-message', data._id)
+                }}><div className="chat-username">{data.username}</div> <br></br><div className="chat-content">{data.content}</div>
                     <br></br><div className="chat-timestamp">{data.timestamp}</div></button>) : undefined}
         </div>
     )) : (<tbody>
@@ -747,11 +722,9 @@ function Chat(props) {
                                     <div className="tm-bg-primary-dark mt-2 tm-block-product-categories">
                                         <h1 className="tm-block-title pt-4 text-center">Profile</h1>
                                         <div className="tm-product-table-container p-2 mh-90">
-                                            <table className="table tm-table-small tm-product-table">
-                                                <tbody>
-                                                    
-                                                </tbody>
-                                            </table>
+                                            <p class="text-light text-left p-2">Name: {daMes.username}</p>
+                                            <p class="text-light text-left p-2">Email: {daMes.email}</p>
+                                            <p class="text-light text-left p-2">Mobile: {daMes.mobile}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -759,7 +732,87 @@ function Chat(props) {
                         </div>
                     </div>)
                         : (<div>
-                            Ac
+                            <div className id="home">
+                                <div className="container mt-5">
+                                    <div className="row tm-content-row">
+                                        <div className="col-12 tm-block-col">
+                                            <div className="tm-bg-primary-dark tm-block tm-block-h-auto">
+                                                <h2 className="tm-block-title">List of Accounts</h2>
+                                                <div className="tm-bg-primary-dark tm-block tm-block-taller tm-block-scroll">
+
+                                                    <table className="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">NO.</th>
+                                                                <th scope="col">NAME</th>
+                                                                <th scope="col">MOBILE</th>
+                                                                <th scope="col">EMAIL</th>
+                                                                <th scope="col">CREATE DAY</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {renderUser}
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/* row */}
+                                    <div className="row tm-content-row">
+                                        <div className="col-12 tm-block-col">
+                                            <div className="tm-bg-primary-dark tm-block tm-block-settings">
+                                                <h2 className="tm-block-title">Account Settings</h2>
+                                                <form action className="tm-signup-form row">
+                                                <div className="form-group col-lg-4">
+                                                        <label htmlFor="phone">No.</label>
+                                                        <input readOnly id="phone" name="phone" type="tel" className="form-control text-light bg-dark" disabled value={}/>
+                                                    </div>
+                                                    <div className="form-group col-lg-4">
+                                                        <label htmlFor="name">Account Name</label>
+                                                        <input id="name" name="name" type="text" className="form-control validate" value={name}  onInput={e=> setName(e.target.value)}/>
+                                                    </div>
+                                                    <div className="form-group col-lg-4">
+                                                        <label htmlFor="email">Account Email</label>
+                                                        <input id="email" name="email" type="email" className="form-control validate" />
+                                                    </div>
+                                                    <div className="form-group col-lg-4">
+                                                        <label htmlFor="phone">Phone</label>
+                                                        <input id="phone" name="phone" type="tel" className="form-control validate" />
+                                                    </div>
+                                                    <div className="form-group col-lg-4">
+                                                        <label htmlFor="password">Password</label>
+                                                        <input id="password" name="password" type="password" className="form-control validate" />
+                                                    </div>
+                                                    <div className="form-group col-lg-4">
+                                                        <label htmlFor="password2">Re-enter Password</label>
+                                                        <input id="password2" name="password2" type="password" className="form-control validate " />
+                                                    </div>
+                                                    <div className="form-group col-lg-4">
+                                                        <label className="tm-hide-sm">&nbsp;</label>
+                                                        <button type="submit" className="btn btn-primary btn-block text-uppercase">
+                                                            Add Account
+                                                        </button>
+                                                    </div>
+                                                    <div className="form-group col-lg-4">
+                                                        <label className="tm-hide-sm">&nbsp;</label>
+                                                        <button type="submit" className="btn btn-primary btn-block text-uppercase">
+                                                            Update Account
+                                                        </button>
+                                                    </div>
+                                                    <div className="form-group col-lg-4">
+                                                        <label className="tm-hide-sm">&nbsp;</label>
+                                                        <button type="submit" className="btn btn-primary btn-block text-uppercase">
+                                                            Delete Account
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>)
                 }
                 <footer className="tm-footer row tm-mt-small">
@@ -767,7 +820,7 @@ function Chat(props) {
                     </div>
                 </footer>
             </div>
-        </div>
+        </div >
     )
 }
 
@@ -786,6 +839,19 @@ function months(config, MONTHS) {
     return values;
 }
 
+function dataline(data) {
+    var value = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    if (data == null) return;
+    for (let i = 0; i < data.length; i++) {
+        let ts = data[i].createday;
+        ts = Number(ts);
+        let date = new Date(ts);
+        let month = date.getMonth();
+        value[month]++;
+    }
+    return value;
+}
+
 function isNull(data) {
     if (data != null && data.content != "") return true;
     return false;
@@ -795,5 +861,6 @@ function isMessSender(data) {
     if (data.senderid == '6374fedad36a12dad2ba4b56') return true;
     return false;
 }
+
 
 export default Chat

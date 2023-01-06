@@ -34,7 +34,7 @@ import io.socket.emitter.Emitter;
 
 public class HomeFragment extends Fragment {
 
-    private final String URL_SERVER = "http://192.168.1.21:3000/";
+    private final String URL_SERVER = "http://192.168.1.25:3000/";
     private Socket mSocket;
     private Boolean isadmin = false;
 

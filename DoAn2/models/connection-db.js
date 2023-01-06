@@ -53,8 +53,54 @@ async function QueryUser(query, collection) {
         name: value.name,
         pass: value.pass,
         phone: value.phone,
-        mail: value.Mail
+        mail: value.Mail,
+        createday: value.createday,
+        decentralize: value.decentralize
       });
+    });
+    return user;
+  } finally {
+    await client.close();
+  }
+
+}
+
+async function QueryManyUser(query, collection) {
+  const client = new MongoClient(url);
+  var user = [];
+  var i = 0;
+  try {
+    const database = client.db("DoAn");
+    const collect = database.collection(collection);
+    // query for movies that have a runtime less than 15 minutes
+
+    const data = collect.find(query);
+    // print a message if no documents were found
+    if ((await data.count()) === 0) {
+      console.log("No documents found!");
+      return false;
+    }
+    // replace console.dir with your callback to access individual elements
+    await data.forEach(async function (value) {
+    let a = value.createday.toString();
+    a = Number(a);
+    let date_ob = new Date(a); 
+    let date = date_ob.getDate();
+    let month = date_ob.getMonth() + 1;
+    let year = date_ob.getFullYear();
+    let dcreate = date + "-" + month + "-" + year;
+      user[i] = new usermodel({
+        _id: value._id,
+        name: value.name,
+        pass: value.pass,
+        phone: value.phone,
+        mail: value.Mail,
+        createday: value.createday,
+        decentralize: value.decentralize,
+        stt: i,
+        date: dcreate
+      });
+      i++
     });
     return user;
   } finally {
@@ -67,7 +113,7 @@ async function Update(query, data, collection) {
 
   const client = new MongoClient(url);
 
-  try {
+  try { 
     const database = client.db("DoAn");
     const collect = database.collection(collection);
 
@@ -77,6 +123,8 @@ async function Update(query, data, collection) {
 
     const result = await collect.updateMany(query, updateDoc);
     console.log(`Updated ${result.modifiedCount} documents`);
+    if(result.modifiedCount ===0) return false;
+    return true;
   } finally {
     await client.close();
   }
@@ -147,7 +195,9 @@ async function QueryContext(query, collection) {
         suggested: value.suggestedMessage,
         username: "",
         content:"",
-        timestamp:""
+        timestamp:"",
+        email:"",
+        mobile:""
       });
       i++;
     });
@@ -224,4 +274,4 @@ async function QueryUtterance(query, collection) {
 
 }
 
-module.exports = { Insert, QueryUser, Update, Delete, deleteMany, QueryContext, QueryMessage, QueryUtterance }
+module.exports = { Insert, QueryUser, Update, Delete, deleteMany, QueryContext, QueryMessage, QueryUtterance, QueryManyUser }

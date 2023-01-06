@@ -32,7 +32,7 @@ import io.socket.emitter.Emitter;
 
 public class LoginFragment extends Fragment {
 
-    private final String URL_SERVER = "http://192.168.1.21:3000/";
+    private final String URL_SERVER = "http://192.168.1.42:3000/";
     private Socket mSocket;
 
     {

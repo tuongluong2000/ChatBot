@@ -27,7 +27,9 @@ async function Conection(io) {
                 {
                     socket.join(data[i]._id.toString());
                 }
-                console.log(data);
+                var users = await controller.QueryAllUser();
+                console.log(users)
+                io.to("6374fedad36a12dad2ba4b56").emit('admin_data_user', {data: users})
                 io.to("6374fedad36a12dad2ba4b56").emit('admin_data_context', { data: data, status: "true"});
             }
         });

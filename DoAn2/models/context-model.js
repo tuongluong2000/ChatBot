@@ -24,6 +24,14 @@ const ContextSchema = new Schema({
     timestamp: {
         type: String,
         require: true
+    },
+    email: {
+        type: String,
+        require: true
+    },
+    mobile: {
+        type: String,
+        require: true
     }
 });
 

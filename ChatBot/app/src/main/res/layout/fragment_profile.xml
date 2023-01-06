@@ -30,33 +30,62 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="70dp"
             android:background="@drawable/avatar_background"
             android:contentDescription="Profile Image"
             android:scaleType="center"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_person_24"
             app:tint="@color/blue_accent_300" />
 
         <TextView
+            android:id="@+id/profile_name_label_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:drawablePadding="16dp"
+            android:padding="16dp"
+            android:text="Tên"
+            android:textAppearance="@style/TextAppearance.MyTheme.Body1"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@drawable/ic_outlined_person_24"
+            app:drawableTint="@color/blue_accent_300"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_image_view" />
+
+        <TextView
             android:id="@+id/profile_name_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:textAppearance="@style/TextAppearance.MyTheme.Headline6"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/profile_image_view"
-            app:layout_constraintStart_toEndOf="@+id/profile_image_view"
-            app:layout_constraintTop_toTopOf="@+id/profile_image_view"
+            android:layout_marginTop="30dp"
+            android:padding="16dp"
+            android:textAlignment="viewEnd"
+            android:textAppearance="@style/TextAppearance.MyTheme.Subtitle1"
+            app:layout_constraintEnd_toStartOf="@id/btn_edit_name"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/profile_name_label_tv"
+            app:layout_constraintTop_toBottomOf="@+id/profile_image_view"
+            tools:ignore="MissingConstraints"
             tools:text="Some User Name" />
+
+        <ImageButton
+            android:id="@+id/btn_edit_name"
+            android:layout_width="60dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/ic_launcher_right_foreground"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_image_view"
+            tools:ignore="MissingConstraints" />
 
         <TextView
             android:id="@+id/profile_email_label_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:drawablePadding="16dp"
             android:padding="16dp"
             android:text="Email"
@@ -66,7 +95,7 @@
             app:drawableStartCompat="@drawable/ic_outline_email_24"
             app:drawableTint="@color/blue_accent_300"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_image_view" />
+            app:layout_constraintTop_toBottomOf="@+id/profile_name_label_tv" />
 
         <TextView
             android:id="@+id/profile_email_tv"
@@ -77,11 +106,20 @@
             android:textAlignment="viewEnd"
             android:textAppearance="@style/TextAppearance.MyTheme.Subtitle1"
             app:layout_constraintBottom_toBottomOf="@+id/profile_email_label_tv"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_edit_email"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/profile_email_label_tv"
             app:layout_constraintTop_toTopOf="@+id/profile_email_label_tv"
             tools:text="somemail@example.com" />
+
+        <ImageButton
+            android:id="@+id/btn_edit_email"
+            android:layout_width="60dp"
+            android:layout_height="55dp"
+            android:background="@drawable/ic_launcher_right_foreground"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/profile_email_label_tv"
+            tools:ignore="MissingConstraints" />
 
         <TextView
             android:id="@+id/profile_mobile_label_tv"
@@ -107,30 +145,54 @@
             android:textAlignment="viewEnd"
             android:textAppearance="@style/TextAppearance.MyTheme.Subtitle1"
             app:layout_constraintBottom_toBottomOf="@+id/profile_mobile_label_tv"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_edit_mobile"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/profile_mobile_label_tv"
             app:layout_constraintTop_toTopOf="@+id/profile_mobile_label_tv"
             tools:text="+91 9999988888" />
 
-        <Button
-            android:id="@+id/changePass_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="16dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/light_gray"
-            android:paddingStart="32dp"
-            android:paddingEnd="32dp"
-            android:text="Đổi mật khẩu"
-            android:textAllCaps="false"
-            android:textColor="@color/black"
-            android:textStyle="bold|italic"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <ImageButton
+            android:id="@+id/btn_edit_mobile"
+            android:layout_width="60dp"
+            android:layout_height="55dp"
+            android:background="@drawable/ic_launcher_right_foreground"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/profile_mobile_label_tv"
+            tools:ignore="MissingConstraints" />
+
+        <ImageView
+            android:id="@+id/imgPass"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="11dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/icon_edit_pass"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_mobile_label_tv"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/profile_pass_label_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:drawablePadding="16dp"
+            android:padding="16dp"
+            android:text="Đổi mật khẩu"
+            android:textAppearance="@style/TextAppearance.MyTheme.Body1"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/imgPass"
             app:layout_constraintTop_toBottomOf="@+id/profile_mobile_label_tv" />
+
+        <ImageButton
+            android:id="@+id/btn_edit_pass"
+            android:layout_width="60dp"
+            android:layout_height="55dp"
+            android:background="@drawable/ic_launcher_right_foreground"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/profile_pass_label_tv"
+            tools:ignore="MissingConstraints" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>

@@ -115,6 +115,16 @@ async function Conection(io) {
             var data = await controller.QueryUser(userid);
             io.to(USERID).emit('data_profile_user', { data: data });
         });
+        socket.on('mobile_update_profile', async (userid,name,email,mobile)=>{
+            socket.join(USERID);
+            var data = await controller.UpdateUser(userid,name,email,mobile)
+            if(data ==false){
+                io.to(USERID).emit('data_profile_user', { status: "false" });
+            } else {
+                var data1 = await controller.QueryUser(userid)
+                io.to(USERID).emit('data_profile_user', { data: data1 });
+            }
+        })
     });
 }
 

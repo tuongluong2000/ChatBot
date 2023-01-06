@@ -16,7 +16,7 @@ import io.socket.client.Socket;
 
 public class LoginSignupActivity extends AppCompatActivity {
 
-    private final String URL_SERVER = "http://192.168.1.21:3000/";
+    private final String URL_SERVER = "http://192.168.1.42:3000/";
     private Socket mSocket;
 
     {

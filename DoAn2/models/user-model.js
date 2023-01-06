@@ -17,6 +17,20 @@ const UserSchema = new Schema({
     mail: {
         type: String,
         required: true
+    },
+    createday: {
+        type: String,
+        required: true
+    },
+    decentralize: {
+        type: String,
+        required: true
+    }, stt: {
+        type: String,
+        required: true
+    }, date: {
+        type: String,
+        required: true
     }
 });
 
