@@ -33,6 +33,7 @@ function Chat(props) {
     const [inputmess, setInputMess] = useState('');
     const [search, setSearch] = useState('');
     const [edituser, setEditUser] = useState();
+    const [no, setNo] = useState('');
     const [email, setEmail] = useState('');
     const [phone,setPhone] = useState('');
     const [name,setName] = useState('');
@@ -767,7 +768,7 @@ function Chat(props) {
                                                 <form action className="tm-signup-form row">
                                                 <div className="form-group col-lg-4">
                                                         <label htmlFor="phone">No.</label>
-                                                        <input readOnly id="phone" name="phone" type="tel" className="form-control text-light bg-dark" disabled value={}/>
+                                                        <input readOnly id="phone" name="phone" type="tel" className="form-control text-light bg-dark" disabled value={no}/>
                                                     </div>
                                                     <div className="form-group col-lg-4">
                                                         <label htmlFor="name">Account Name</label>
