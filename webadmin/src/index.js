@@ -3,11 +3,19 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { ToastProvider } from 'rc-toastr'
+import "rc-toastr/dist/index.css"
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+
+   <ToastProvider config={{
+        position: "top-right",
+        duration: 3000
+    }} >
+        <App />
+    </ToastProvider>
   </React.StrictMode>
 );
 

@@ -28,7 +28,6 @@ async function Conection(io) {
                     socket.join(data[i]._id.toString());
                 }
                 var users = await controller.QueryAllUser();
-                console.log(users)
                 io.to("6374fedad36a12dad2ba4b56").emit('admin_data_user', {data: users})
                 io.to("6374fedad36a12dad2ba4b56").emit('admin_data_context', { data: data, status: "true"});
             }
@@ -66,6 +65,36 @@ async function Conection(io) {
             else{
                 console.log(data);
                 io.to("6374fedad36a12dad2ba4b56").emit('admin_data_message_new', { data: data, status: "true" });
+            }
+        });
+        socket.on('admin_add_user',async (name,mail,phone,pass)=>{
+            console.log('admin add user');
+            var data = await controller.InsertUser(name,phone,mail,pass);
+            if (data ==false){
+                console.log('insert user false')
+            } else {
+                var users = await controller.QueryAllUser();
+                io.to("6374fedad36a12dad2ba4b56").emit('admin_data_user', {data: users});
+            }
+        });
+        socket.on('admin_update_user',async (userid, name,mail,phone)=>{
+            console.log('admin update user');
+            var data = await controller.UpdateUser(userid,name,mail,phone);
+            if (data ==false){
+                console.log('update user false')
+            } else {
+                var users = await controller.QueryAllUser();
+                io.to("6374fedad36a12dad2ba4b56").emit('admin_data_user', {data: users});
+            }
+        });
+        socket.on('admin_delete_user',async (userid)=>{
+            console.log('admin update user');
+            var data = await controller.DeleteUser(userid);
+            if (data ==false){
+                console.log('delete user false')
+            } else {
+                var users = await controller.QueryAllUser();
+                io.to("6374fedad36a12dad2ba4b56").emit('admin_data_user', {data: users});
             }
         });
     });

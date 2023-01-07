@@ -17,6 +17,8 @@ import {
 } from 'chart.js/auto';
 import { Line, Bar } from 'react-chartjs-2';
 
+import { useToast } from 'rc-toastr'
+
 function Chat(props) {
     console.log(props);
     const host = "http://localhost:3000";
@@ -32,14 +34,22 @@ function Chat(props) {
     const [isAc, setAc] = useState(false);
     const [inputmess, setInputMess] = useState('');
     const [search, setSearch] = useState('');
-    const [edituser, setEditUser] = useState();
+    const [isActive, setActive] = useState();
     const [no, setNo] = useState('');
     const [email, setEmail] = useState('');
-    const [phone,setPhone] = useState('');
-    const [name,setName] = useState('');
-    const [pass,setPass] = useState('');
-    const [repass,setRepass] = useState('');
+    const [phone, setPhone] = useState('');
+    const [name, setName] = useState('');
+    const [year, setYear] = useState(2023);
+    const [newpass, setNewPass] = useState('');
+    const [repass, setRepass] = useState('');
     const [luser, setLUser] = useState();
+    const [isAccount, setIsAccount] = useState('');
+    const { toast } = useToast()
+    const [addemail, setaddEmail] = useState('');
+    const [addphone, setaddPhone] = useState('');
+    const [addname, setaddName] = useState('');
+    const [addpass, setaddPass] = useState('');
+    const [addrepass, setaddRepass] = useState('');
     useEffect(() => {
         socketRef.current = socketIOClient.connect(host)
         socketRef.current.emit('admin-get-context', props.idadmin);
@@ -72,8 +82,8 @@ function Chat(props) {
         socketRef.current.on('admin_data_user', data => {
             console.log(data.data);
             setUserList(data.data);
-            if(luser == undefined)
-            setLUser(data.data);
+            if (luser == undefined)
+                setLUser(data.data);
         });
         return () => {
             socketRef.current.disconnect();
@@ -84,9 +94,7 @@ function Chat(props) {
         localStorage.setItem('username', 'false');
         window.location.reload();
     }
-    const user = () => {
-        (<div>{userid}</div>)
-    }
+
     const isContentHome = () => {
         setHome(true);
         setAc(false);
@@ -145,7 +153,7 @@ function Chat(props) {
             'white',    // color for data at index 0
         ],
     };
-    const dtline = dataline(userlist)
+    const dtline = dataline(userlist, year)
     const configLine = {
         type: "line",
 
@@ -216,6 +224,46 @@ function Chat(props) {
         options: optionsBar
     };
 
+    const Clear = () => {
+        setaddName(''); setaddPhone(''); setaddEmail(''); setaddPass(''); setaddRepass('');
+    }
+
+    const UpdateUser = () => {
+        if (no == "" || no == undefined) {
+            toast.error("Please select an account")
+        }
+        else {
+            if (name == '' || email == '' || phone == '') {
+                toast.warning('Please fill in all fields')
+            }
+            else {
+                socketRef.current.emit('admin_update_user', userid, name, email, phone)
+                toast.success("Updated account successfully");
+                setIsAccount('');
+            }
+        }
+    }
+
+    const AddUser = () => {
+        if (addname == '' || addemail == '' || addphone == '' || addpass == '' || addrepass == '') {
+            toast.warning('Please fill in all fields')
+        } else {
+            if (addpass != addrepass) {
+                toast.error('The passwords are not the same')
+            } else {
+                socketRef.current.emit('admin_add_user', addname, addemail, addphone, addpass)
+                toast.success('Added account successfully')
+                setIsAccount('')
+                Clear();
+            }
+        }
+    }
+    const DeleteUser = () => {
+        socketRef.current.emit('admin_delete_user', userid)
+        toast.success('Deleted account successfully');
+        setIsAccount('');
+        setName(''); setNo(''); setPhone(''); setEmail(''); setUserId('');
+    }
     const sentMess = () => {
         if (inputmess != '' && daMes != null) {
             const timeElapsed = Date.now();
@@ -227,7 +275,7 @@ function Chat(props) {
     const searchUser = (dt, value) => {
         setSearch(value)
         if (value != "" && value != undefined && value != null && value != " ") {
-            value= value.toString()
+            value = value.toString()
             var data = [];
             for (let i = 0; i < dt.length; i++) {
                 let dtt = dt[i]
@@ -241,9 +289,16 @@ function Chat(props) {
             console.log(luser)
         }
     }
-    const renderUser = luser ? (
-        userlist.map((data) =>
-            <tr onClick={() => { setName(data.name) }}>
+    const renderUser = userlist ? (
+        userlist.map((data, i) =>
+            <tr onClick={() => {
+                setName(data.name); setNo(data.stt); setPhone(data.phone); setEmail(data.mail); setUserId(data._id);
+                setActive(i);
+            }} style={
+                isActive === i
+                    ? { background: 'green' }
+                    : undefined
+            }>
                 <td><b>{data.stt}</b></td>
                 <td><b>{data.name}</b></td>
                 <td><b>{data.phone}</b></td>
@@ -399,12 +454,7 @@ function Chat(props) {
             <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
             <title>Product Admin - Dashboard HTML Template</title>
             <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700" />
-            {/* https://fonts.google.com/specimen/Roboto */}
-            <link rel="stylesheet" href="css/fontawesome.min.css" />
-            {/* https://fontawesome.com/ */}
-            <link rel="stylesheet" href="css/bootstrap.min.css" />
-            {/* https://getbootstrap.com/ */}
-            <link rel="stylesheet" href="css/templatemo-style.css" />
+
             <div className id="home">
                 <nav className="navbar navbar-expand-xl">
                     <div className="container h-100">
@@ -482,7 +532,14 @@ function Chat(props) {
                     <div className="row tm-content-row">
                         <div className="col-sm-24 col-md-24 col-lg-12 col-xl-12 tm-block-col">
                             <div className="tm-bg-primary-dark bg-info tm-block">
-                                <h2 className="tm-block-title">Latest Hits</h2>
+                                <div class="form-group row">
+                                    <h2 className="tm-block-title">Latest Hits Of The Year &ensp;</h2>
+
+                                    <select class="form-control-sm " value={year} onChange={e => setYear(e.target.value)}>
+                                        <option value="2022">2022</option>
+                                        <option value="2023">2023</option>
+                                    </select>
+                                </div>
                                 <div className="black"><Line data={configLine} options={optionsLine} /></div>
                             </div>
                         </div>
@@ -513,158 +570,7 @@ function Chat(props) {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-12 tm-block-col">
-                            <div className="tm-bg-primary-dark tm-block tm-block-taller tm-block-scroll">
-                                <h2 className="tm-block-title">Potential Customers List</h2>
-                                <table className="table">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">REQUEST NO.</th>
-                                            <th scope="col">STATUS</th>
-                                            <th scope="col">OPERATORS</th>
-                                            <th scope="col">LOCATION</th>
-                                            <th scope="col">MOBILE</th>
-                                            <th scope="col">EMAIL</th>
-                                            <th scope="col">CREATE DAY</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <th scope="row"><b>#122349</b></th>
-                                            <td>
-                                                <div className="tm-status-circle moving">
-                                                </div>Finish
-                                            </td>
-                                            <td><b>Oliver Trag</b></td>
-                                            <td><b>London, UK</b></td>
-                                            <td><b>012345678</b></td>
-                                            <td>user@gmail.com</td>
-                                            <td>08:00, 18 NOV 2022</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"><b>#122348</b></th>
-                                            <td>
-                                                <div className="tm-status-circle pending">
-                                                </div>Pending
-                                            </td>
-                                            <td><b>Jacob Miller</b></td>
-                                            <td><b>London, UK</b></td>
-                                            <td><b>012345678</b></td>
-                                            <td>user1@gmail.com</td>
-                                            <td>08:00, 18 NOV 2022</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"><b>#122347</b></th>
-                                            <td>
-                                                <div className="tm-status-circle cancelled">
-                                                </div>Cancelled
-                                            </td>
-                                            <td><b>George Wilson</b></td>
-                                            <td><b>London, UK</b></td>
-                                            <td><b>012345678</b></td>
-                                            <td>user2@gmail.com</td>
-                                            <td>08:00, 18 NOV 2022</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"><b>#122346</b></th>
-                                            <td>
-                                                <div className="tm-status-circle moving">
-                                                </div>Moving
-                                            </td>
-                                            <td><b>William Aung</b></td>
-                                            <td><b>London, UK</b></td>
-                                            <td><b>012345678</b></td>
-                                            <td>user3@gmail.com</td>
-                                            <td>08:00, 18 NOV 2022</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"><b>#122345</b></th>
-                                            <td>
-                                                <div className="tm-status-circle pending">
-                                                </div>Pending
-                                            </td>
-                                            <td><b>Harry Ryan</b></td>
-                                            <td><b>London, UK</b></td>
-                                            <td><b>012345678</b></td>
-                                            <td>user4@gmail.com</td>
-                                            <td>08:00, 18 NOV 2022</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"><b>#122344</b></th>
-                                            <td>
-                                                <div className="tm-status-circle pending">
-                                                </div>Pending
-                                            </td>
-                                            <td><b>Michael Jones</b></td>
-                                            <td><b>London, UK</b></td>
-                                            <td><b>012345678</b></td>
-                                            <td>user5@gmail.com</td>
-                                            <td>08:00, 18 NOV 2022</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"><b>#122343</b></th>
-                                            <td>
-                                                <div className="tm-status-circle moving">
-                                                </div>Moving
-                                            </td>
-                                            <td><b>Timmy Davis</b></td>
-                                            <td><b>London, UK</b></td>
-                                            <td><b>012345678</b></td>
-                                            <td>user6@gmail.com</td>
-                                            <td>08:00, 18 NOV 2022</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"><b>#122342</b></th>
-                                            <td>
-                                                <div className="tm-status-circle moving">
-                                                </div>Moving
-                                            </td>
-                                            <td><b>Oscar Phyo</b></td>
-                                            <td><b>London, UK</b></td>
-                                            <td><b>012345678</b></td>
-                                            <td>user7@gmail.com</td>
-                                            <td>08:00, 18 NOV 2022</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"><b>#122341</b></th>
-                                            <td>
-                                                <div className="tm-status-circle moving">
-                                                </div>Moving
-                                            </td>
-                                            <td><b>Charlie Brown</b></td>
-                                            <td><b>London, UK</b></td>
-                                            <td><b>012345678</b></td>
-                                            <td>user8@gmail.com</td>
-                                            <td>08:00, 18 NOV 2022</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"><b>#122340</b></th>
-                                            <td>
-                                                <div className="tm-status-circle cancelled">
-                                                </div>Cancelled
-                                            </td>
-                                            <td><b>Wilson Cookies</b></td>
-                                            <td><b>London, UK</b></td>
-                                            <td><b>012345678</b></td>
-                                            <td>user9@gmail.com</td>
-                                            <td>08:00, 18 NOV 2022</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row"><b>#122339</b></th>
-                                            <td>
-                                                <div className="tm-status-circle moving">
-                                                </div>Moving
-                                            </td>
-                                            <td><b>Richard Clamon</b></td>
-                                            <td><b>London, UK</b></td>
-                                            <td><b>012345678</b></td>
-                                            <td>user10@gmail.com</td>
-                                            <td>08:00, 18 NOV 2022</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+
                     </div>
                 </div>) :
                     isChat ? (<div>
@@ -757,61 +663,159 @@ function Chat(props) {
                                                     </table>
 
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {/* row */}
-                                    <div className="row tm-content-row">
-                                        <div className="col-12 tm-block-col">
-                                            <div className="tm-bg-primary-dark tm-block tm-block-settings">
-                                                <h2 className="tm-block-title">Account Settings</h2>
-                                                <form action className="tm-signup-form row">
-                                                <div className="form-group col-lg-4">
-                                                        <label htmlFor="phone">No.</label>
-                                                        <input readOnly id="phone" name="phone" type="tel" className="form-control text-light bg-dark" disabled value={no}/>
-                                                    </div>
-                                                    <div className="form-group col-lg-4">
-                                                        <label htmlFor="name">Account Name</label>
-                                                        <input id="name" name="name" type="text" className="form-control validate" value={name}  onInput={e=> setName(e.target.value)}/>
-                                                    </div>
-                                                    <div className="form-group col-lg-4">
-                                                        <label htmlFor="email">Account Email</label>
-                                                        <input id="email" name="email" type="email" className="form-control validate" />
-                                                    </div>
-                                                    <div className="form-group col-lg-4">
-                                                        <label htmlFor="phone">Phone</label>
-                                                        <input id="phone" name="phone" type="tel" className="form-control validate" />
-                                                    </div>
-                                                    <div className="form-group col-lg-4">
-                                                        <label htmlFor="password">Password</label>
-                                                        <input id="password" name="password" type="password" className="form-control validate" />
-                                                    </div>
-                                                    <div className="form-group col-lg-4">
-                                                        <label htmlFor="password2">Re-enter Password</label>
-                                                        <input id="password2" name="password2" type="password" className="form-control validate " />
-                                                    </div>
+                                                <div className="tm-signup-form row">
                                                     <div className="form-group col-lg-4">
                                                         <label className="tm-hide-sm">&nbsp;</label>
-                                                        <button type="submit" className="btn btn-primary btn-block text-uppercase">
+                                                        <button className="btn btn-primary btn-block text-uppercase bg-dark" onClick={() => setIsAccount('add')}>
                                                             Add Account
                                                         </button>
                                                     </div>
                                                     <div className="form-group col-lg-4">
                                                         <label className="tm-hide-sm">&nbsp;</label>
-                                                        <button type="submit" className="btn btn-primary btn-block text-uppercase">
+                                                        <button className="btn btn-primary btn-block text-uppercase bg-dark" onClick={() => setIsAccount('update')}>
                                                             Update Account
                                                         </button>
                                                     </div>
                                                     <div className="form-group col-lg-4">
                                                         <label className="tm-hide-sm">&nbsp;</label>
-                                                        <button type="submit" className="btn btn-primary btn-block text-uppercase">
+                                                        <button className="btn btn-primary btn-block text-uppercase bg-dark" onClick={() => setIsAccount('delete')}>
                                                             Delete Account
                                                         </button>
                                                     </div>
-                                                </form>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    {isAccount === 'add' ? (<div className="row tm-content-row">
+                                        <div className="col-12 tm-block-col">
+                                            <div className="tm-bg-primary-dark tm-block tm-block-settings">
+                                                <h2 className="tm-block-title">Account Add</h2>
+                                                <div className="tm-signup-form row">
+                                                    <div className="form-group col-lg-4">
+                                                        <label htmlFor="name">Account Name</label>
+                                                        <input id="name" name="name" type="text" className="form-control validate" value={addname} onInput={e => setaddName(e.target.value)} />
+                                                    </div>
+                                                    <div className="form-group col-lg-4">
+                                                        <label htmlFor="email">Account Email</label>
+                                                        <input id="email" name="email" type="email" className="form-control validate" value={addemail} onInput={e => setaddEmail(e.target.value)} />
+                                                    </div>
+                                                    <div className="form-group col-lg-4">
+                                                        <label htmlFor="phone">Account Phone</label>
+                                                        <input id="phone" name="phone" type="tel" className="form-control validate" value={addphone} onInput={e => setaddPhone(e.target.value)} />
+                                                    </div>
+                                                    <div className="form-group col-lg-4">
+                                                        <label htmlFor="password">Password</label>
+                                                        <input id="password" name="password" type="password" className="form-control validate" value={addpass} onInput={e => setaddPass(e.target.value)} />
+                                                    </div>
+
+                                                    <div className="form-group col-lg-4">
+                                                        <label htmlFor="password2">Re-enter Password</label>
+                                                        <input id="password2" name="password2" type="password" className="form-control validate " value={addrepass} onInput={e => setaddRepass(e.target.value)} />
+                                                    </div>
+                                                    <div className="form-group col-lg-4">
+                                                        <label className="tm-hide-sm">&nbsp;</label>
+                                                        <button className="btn btn-primary btn-block text-uppercase bg-dark" onClick={Clear}>
+                                                            Clear
+                                                        </button>
+                                                    </div>
+                                                    <div className="form-group col-lg-6">
+                                                        <label className="tm-hide-sm">&nbsp;</label>
+                                                        <button type="submit" className="btn btn-primary btn-block text-uppercase" onClick={() => setIsAccount('')} >
+                                                            cancel
+                                                        </button>
+                                                    </div>
+                                                    <div className="form-group col-lg-6">
+                                                        <label className="tm-hide-sm">&nbsp;</label>
+                                                        <button className="btn btn-success btn-primary btn-block text-uppercase" onClick={AddUser} >
+                                                            Add Account
+                                                        </button>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>) : (isAccount === 'update' ? (<div className="row tm-content-row">
+                                        <div className="col-12 tm-block-col">
+                                            <div className="tm-bg-primary-dark tm-block tm-block-settings">
+                                                <h2 className="tm-block-title">Account Update</h2>
+                                                <div className="tm-signup-form row">
+                                                    <div className="form-group col-lg-12">
+                                                        <label htmlFor="phone">No.</label>
+                                                        <input readOnly id="phone" name="phone" type="tel" className="form-control text-light bg-dark" disabled value={no} />
+                                                    </div>
+
+                                                    <div className="form-group col-lg-4">
+                                                        <label htmlFor="name">Account Name</label>
+                                                        <input id="name" name="name" type="text" className="form-control validate" value={name} onInput={e => setName(e.target.value)} />
+                                                    </div>
+                                                    <div className="form-group col-lg-4">
+                                                        <label htmlFor="email">Account Email</label>
+                                                        <input id="email" name="email" type="email" className="form-control validate" value={email} onInput={e => setEmail(e.target.value)} />
+                                                    </div>
+                                                    <div className="form-group col-lg-4">
+                                                        <label htmlFor="phone">Account Phone</label>
+                                                        <input id="phone" name="phone" type="tel" className="form-control validate" value={phone} onInput={e => setPhone(e.target.value)} />
+                                                    </div>
+                                                    <div className="form-group col-lg-6">
+                                                        <label className="tm-hide-sm">&nbsp;</label>
+                                                        <button type="submit" className="btn btn-primary btn-block text-uppercase" onClick={() => setIsAccount('')} >
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                    <div className="form-group col-lg-6">
+                                                        <label className="tm-hide-sm">&nbsp;</label>
+                                                        <button className="btn btn-success btn-primary btn-block text-uppercase" onClick={UpdateUser}>
+                                                            Update Account
+                                                        </button>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>) : (isAccount === 'delete' ? (<div className="row tm-content-row">
+                                        <div className="col-12 tm-block-col">
+                                            <div className="tm-bg-primary-dark tm-block tm-block-settings">
+                                                <h2 className="tm-block-title">Account Delete</h2>
+                                                <p class="text-warning">Are you sure you want to delete this account?</p>
+                                                <div className="tm-signup-form row">
+
+                                                    <div className="form-group col-lg-12">
+                                                        <label htmlFor="phone">No.</label>
+                                                        <input readOnly id="phone" name="phone" type="tel" className="form-control text-light bg-dark" disabled value={no} />
+                                                    </div>
+
+                                                    <div className="form-group col-lg-4">
+                                                        <label htmlFor="name">Account Name</label>
+                                                        <input id="name" name="name" type="text" className="form-control validate bg-dark" disabled value={name} onInput={e => setName(e.target.value)} />
+                                                    </div>
+                                                    <div className="form-group col-lg-4">
+                                                        <label htmlFor="email">Account Email</label>
+                                                        <input id="email" name="email" type="email" className="form-control validate bg-dark" disabled value={email} onInput={e => setEmail(e.target.value)} />
+                                                    </div>
+                                                    <div className="form-group col-lg-4">
+                                                        <label htmlFor="phone">Account Phone</label>
+                                                        <input id="phone" name="phone" type="tel" className="form-control validate bg-dark" disabled value={phone} onInput={e => setPhone(e.target.value)} />
+                                                    </div>
+
+                                                    <div className="form-group col-lg-6">
+                                                        <label className="tm-hide-sm">&nbsp;</label>
+                                                        <button type="submit" className="btn btn-primary btn-block text-uppercase" onClick={() => setIsAccount('')} >
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                    <div className="form-group col-lg-6">
+                                                        <label className="tm-hide-sm">&nbsp;</label>
+                                                        <button className="btn btn-success btn-primary btn-block text-uppercase" onClick={DeleteUser}>
+                                                            Delete Account
+                                                        </button>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>) : undefined))}
+
+
                                 </div>
                             </div>
                         </div>)
@@ -840,7 +844,7 @@ function months(config, MONTHS) {
     return values;
 }
 
-function dataline(data) {
+function dataline(data, year) {
     var value = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     if (data == null) return;
     for (let i = 0; i < data.length; i++) {
@@ -848,7 +852,9 @@ function dataline(data) {
         ts = Number(ts);
         let date = new Date(ts);
         let month = date.getMonth();
-        value[month]++;
+        let y = date.getFullYear();
+        if (y == year)
+            value[month]++;
     }
     return value;
 }

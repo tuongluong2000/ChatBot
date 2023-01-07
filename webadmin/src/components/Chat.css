@@ -356,3 +356,7 @@
 .has-search .form-control::placeholder {
   color: rgb(176, 175, 175);;
 }
+.success td
+{
+    background-color:red !important;
+}
